@@ -65,7 +65,7 @@ foreach (KeyValuePair<string, StoreLocation> locationKeyPair in mapData.location
 }
 
 GameData score = new Scoring().CalculateScore(string.Empty, solution, mapData, generalData);
-Console.WriteLine(score.GameScore.Total);
-//GameData prodScore = await api.SumbitAsync(mapName, solution, apikey);
-//Console.WriteLine(prodScore.GameScore.Total);
+Console.WriteLine($"GameScore: {score.GameScore.Total}");
+GameData prodScore = await api.SumbitAsync(mapName, solution, apikey);
+Console.WriteLine($"GameId: {prodScore.Id}");
 Console.ReadLine();

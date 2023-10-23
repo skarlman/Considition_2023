@@ -124,6 +124,7 @@ namespace Considition2023_Cs
 
     public class GameData
     {
+        public Guid Id { get; set; }
         public string MapName { get; set; } = string.Empty;
         public Score? GameScore { get; set; }
         public Guid TeamId { get; set; }
