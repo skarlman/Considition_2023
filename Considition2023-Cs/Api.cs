@@ -10,16 +10,18 @@ internal class Api
     public Api(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        //TODO Change to api.considition
         httpClient.BaseAddress = new Uri("https://api.considition.com/");
     }
 
-    public async Task<MapData> GetMapDataAsync(string mapName)
+    public async Task<MapData> GetMapDataAsync(string mapName, string apiKey)
     {
-        HttpResponseMessage response = await _httpClient.GetAsync($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}");
+        HttpRequestMessage request = new();
+        request.Method = HttpMethod.Post;
+        request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+        request.Headers.Add("x-api-key", apiKey);
+        HttpResponseMessage response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
         string responseText = await response.Content.ReadAsStringAsync();
-        File.WriteAllText("kalle.txt", responseText);
         return JsonConvert.DeserializeObject<MapData>(responseText);
     }
 

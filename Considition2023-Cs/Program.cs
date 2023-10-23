@@ -43,7 +43,7 @@ if (mapName is null)
 
 HttpClient client = new();
 Api api = new(client);
-MapData mapData = await api.GetMapDataAsync(mapName);
+MapData mapData = await api.GetMapDataAsync(mapName, apikey);
 GeneralData generalData = await api.GetGeneralDataAsync();
 SubmitSolution solution = new() 
 {
