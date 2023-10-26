@@ -1,7 +1,7 @@
 ﻿using Considition2023_Cs;
 using System.Text.Json.Serialization;
 
-string apikey = "";
+const string apikey = "";
 
 
 if (string.IsNullOrWhiteSpace(apikey))
