@@ -16,7 +16,7 @@ internal class Api
     public async Task<MapData> GetMapDataAsync(string mapName, string apiKey)
     {
         HttpRequestMessage request = new();
-        request.Method = HttpMethod.Post;
+        request.Method = HttpMethod.Get;
         request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
         request.Headers.Add("x-api-key", apiKey);
         HttpResponseMessage response = await _httpClient.SendAsync(request);
