@@ -70,4 +70,5 @@ GameData score = new Scoring().CalculateScore(string.Empty, solution, mapData, g
 Console.WriteLine($"GameScore: {score.GameScore.Total}");
 GameData prodScore = await api.SumbitAsync(mapName, solution, apikey);
 Console.WriteLine($"GameId: {prodScore.Id}");
+Console.WriteLine($"GameScore: {prodScore.GameScore}");
 Console.ReadLine();
