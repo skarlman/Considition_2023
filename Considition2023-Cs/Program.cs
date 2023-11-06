@@ -32,6 +32,8 @@ var mapName = option switch
     "5" => MapNames.Vasteras,
     "6" => MapNames.Orebro,
     "7" => MapNames.London,
+    "8" => MapNames.Linkoping,
+    "9" => MapNames.Berlin,
     _ => null
 };
 
