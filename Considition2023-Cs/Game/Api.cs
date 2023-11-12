@@ -15,21 +15,51 @@ internal class Api
 
     public async Task<MapData> GetMapDataAsync(string mapName, string apiKey)
     {
-        HttpRequestMessage request = new();
-        request.Method = HttpMethod.Get;
-        request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
-        request.Headers.Add("x-api-key", apiKey);
-        HttpResponseMessage response = await _httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-        string responseText = await response.Content.ReadAsStringAsync();
+        if (!Directory.Exists("datacache"))
+            Directory.CreateDirectory("datacache");
+
+        string cacheFileName = $"datacache\\cached-MapData-{mapName}.json";
+        
+        string responseText;
+        if (!File.Exists(cacheFileName))
+        {
+            HttpRequestMessage request = new();
+            request.Method = HttpMethod.Get;
+            request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+            request.Headers.Add("x-api-key", apiKey);
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            responseText = await response.Content.ReadAsStringAsync();
+            File.WriteAllText(cacheFileName, responseText);
+        }
+        else
+        {
+            responseText = File.ReadAllText(cacheFileName);
+        }
+
         return JsonConvert.DeserializeObject<MapData>(responseText);
     }
 
     public async Task<GeneralData> GetGeneralDataAsync()
     {
-        var response = await _httpClient.GetAsync("/api/game/getgeneralgamedata");
-        response.EnsureSuccessStatusCode();
-        string responseText = await response.Content.ReadAsStringAsync();
+        if (!Directory.Exists("datacache"))
+            Directory.CreateDirectory("datacache");
+
+        string cacheFileName = $"datacache\\cached-GeneralData.json";
+
+        string responseText;
+        if (!File.Exists(cacheFileName))
+        {
+            var response = await _httpClient.GetAsync("/api/game/getgeneralgamedata");
+            response.EnsureSuccessStatusCode();
+            responseText = await response.Content.ReadAsStringAsync();
+            File.WriteAllText(cacheFileName, responseText);
+        }
+        else
+        {
+            responseText = File.ReadAllText(cacheFileName);
+        }
+
         return JsonConvert.DeserializeObject<GeneralData>(responseText);
     }
 

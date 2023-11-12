@@ -22,7 +22,7 @@ namespace Considition2023_Cs.Genetics
         {
             var candidateChromosome = chromosome as SolutionChromosome;
 
-            var gameData = Scoring.CalculateScore("IRRELEVANTMAPNAME", candidateChromosome.ToSolution(), _mapData, _generalData);
+            var gameData = Scoring.CalculateScore("IRRELEVANTMAPNAME", candidateChromosome.ToSolution(_mapData), _mapData, _generalData);
 
             return gameData.GameScore.Total;
 
