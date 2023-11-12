@@ -1,4 +1,4 @@
-﻿namespace Considition2023_Cs;
+﻿namespace Considition2023_Cs.Game;
 
 public static class MapNames
 {

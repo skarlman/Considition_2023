@@ -1,7 +1,8 @@
 ﻿using Considition2023_Cs;
+using Considition2023_Cs.Game;
 using System.Text.Json.Serialization;
 
-const string apikey = "";
+const string apikey = "3c5671b2-caaa-4644-b453-b788e5d83549";
 
 
 if (string.IsNullOrWhiteSpace(apikey))
@@ -46,11 +47,14 @@ if (mapName is null)
 HttpClient client = new();
 Api api = new(client);
 MapData mapData = await api.GetMapDataAsync(mapName, apikey);
+
 GeneralData generalData = await api.GetGeneralDataAsync();
+
 SubmitSolution solution = new() 
 {
     Locations = new()
 };
+
 foreach (KeyValuePair<string, StoreLocation> locationKeyPair in mapData.locations)
 {
     StoreLocation location = locationKeyPair.Value;
@@ -66,9 +70,9 @@ foreach (KeyValuePair<string, StoreLocation> locationKeyPair in mapData.location
     }
 }
 
-GameData score = new Scoring().CalculateScore(string.Empty, solution, mapData, generalData);
+GameData score = Scoring.CalculateScore(string.Empty, solution, mapData, generalData);
 Console.WriteLine($"GameScore: {score.GameScore.Total}");
 GameData prodScore = await api.SumbitAsync(mapName, solution, apikey);
 Console.WriteLine($"GameId: {prodScore.Id}");
-Console.WriteLine($"GameScore: {prodScore.GameScore}");
+Console.WriteLine($"GameScore: {prodScore.GameScore.Total}");
 Console.ReadLine();

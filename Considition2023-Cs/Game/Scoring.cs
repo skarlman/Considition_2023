@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs
+namespace Considition2023_Cs.Game
 {
     internal class Scoring
     {
-        public GameData CalculateScore(string mapName, SubmitSolution solution, MapData mapEntity, GeneralData generalData)
+        public static GameData CalculateScore(string mapName, SubmitSolution solution, MapData mapEntity, GeneralData generalData)
         {
-            GameData scored = new() 
+            GameData scored = new()
             {
                 MapName = mapName,
                 TeamId = Guid.Empty,
@@ -119,7 +119,7 @@ namespace Considition2023_Cs
             return scored;
         }
 
-        private Dictionary<string, StoreLocationScoring> DistributeSales(Dictionary<string, StoreLocationScoring> with, Dictionary<string, StoreLocationScoring> without, GeneralData generalData)
+        private static Dictionary<string, StoreLocationScoring> DistributeSales(Dictionary<string, StoreLocationScoring> with, Dictionary<string, StoreLocationScoring> without, GeneralData generalData)
         {
             foreach (KeyValuePair<string, StoreLocationScoring> kvpWithout in without)
             {
@@ -176,6 +176,11 @@ namespace Considition2023_Cs
             int distance = (int)Math.Round(r * c, 0);
 
             return distance;
+        }
+
+        internal static object CalculateScore(string v, object value, MapData mapData, GeneralData generalData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json;
 
-namespace Considition2023_Cs;
+namespace Considition2023_Cs.Game;
 
 internal class Api
 {
@@ -53,4 +53,4 @@ internal class Api
         response.EnsureSuccessStatusCode();
         return JsonConvert.DeserializeObject<GameData>(responseText);
     }
-}   
+}

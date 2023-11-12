@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs
+namespace Considition2023_Cs.Game
 {
     public class SubmitSolution
     {
@@ -126,14 +126,14 @@ namespace Considition2023_Cs
     {
         public Guid Id { get; set; }
         public string MapName { get; set; } = string.Empty;
-        public Score? GameScore { get; set; }
+        public Score GameScore { get; set; }
         public Guid TeamId { get; set; }
         public string TeamName { get; set; } = string.Empty;
         public int TotalFreestyle9100Count { get; set; } = 0;
         public int TotalFreestyle3100Count { get; set; } = 0;
         public double TotalLeasingCost { get; set; } = 0;
         public double TotalRevenue { get; set; } = 0;
-        public Dictionary<string, StoreLocationScoring>? Locations { get; set; }
+        public Dictionary<string, StoreLocationScoring> Locations { get; set; }
     }
 
     public class StoreLocationScoring
