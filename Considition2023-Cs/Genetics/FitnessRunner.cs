@@ -13,7 +13,7 @@ namespace Considition2023_Cs.Genetics
         public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData,int populationMinSize, int populationMaxSize, int runs, SolutionChromosome firstChromosome = null)
         {
             
-                var selection = new EliteSelection((int)Math.Floor(0.75*populationMinSize) );
+                var selection = new EliteSelection((int)Math.Floor(0.6*populationMinSize) );
               //  var selection = new RouletteWheelSelection();
                 var crossover = new UniformCrossover();
                 var mutation = new UniformMutation(true);
@@ -26,12 +26,13 @@ namespace Considition2023_Cs.Genetics
                 var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
             //ga.Termination = new Terminator(3566013); //uppsala
             ga.Termination = new Terminator(56826753); //göteborg
-            
-            //ga.Termination = new FitnessStagnationTermination(runs);
-            //ga.GenerationRan += (s, e) =>
-            //        Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
 
-                Console.WriteLine("GA running...");
+            //ga.Termination = new FitnessStagnationTermination(runs);
+            ga.GenerationRan += (s, e) =>
+                    Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
+
+            Console.WriteLine("GA running...");
+                ga.TaskExecutor = new ParallelTaskExecutor();
                 ga.Start();
 
                 Console.WriteLine();

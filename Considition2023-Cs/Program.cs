@@ -42,6 +42,7 @@ Console.Write("Select the map you wish to play: ");
 //};
 
 var mapName = MapNames.Goteborg;
+//var mapName = MapNames.Uppsala;
 
 if (mapName is null)
 {
@@ -56,8 +57,8 @@ MapData mapData = await api.GetMapDataAsync(mapName, apikey);
 GeneralData generalData = await api.GetGeneralDataAsync();
 
 //SubmitSolution solution = GenerateSolution(mapData);
-var populationMinSize = 30;
-var populationMaxSize = 50;
+var populationMinSize = 100;
+var populationMaxSize = 150;
 var iterations = 100;
 
 
