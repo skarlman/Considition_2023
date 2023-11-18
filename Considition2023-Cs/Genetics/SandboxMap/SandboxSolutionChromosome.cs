@@ -56,7 +56,11 @@ Scoring.maxConvenience +
 
             do
             {
-                locationIndex = rng.Next(NumLocations);
+                do
+                {
+                    locationIndex = rng.Next(NumLocations);
+                } while (!IsValidHotSpotLocation(locationIndex, _mapData));
+
                 smallMachines = rng.Next(3);
                 bigMachines = rng.Next(3);
 
@@ -76,6 +80,15 @@ Scoring.maxConvenience +
             } while (smallMachines == 0 && bigMachines == 0);
 
             return new Gene((locationIndex,smallMachines, bigMachines));
+        }
+
+        private bool IsValidHotSpotLocation(int locationIndex, MapData mapData)
+        {
+            return mapData.Hotspots[locationIndex].Longitude < mapData.Border.LongitudeMax
+                && mapData.Hotspots[locationIndex].Longitude > mapData.Border.LongitudeMin
+                && mapData.Hotspots[locationIndex].Latitude < mapData.Border.LatitudeMax
+                && mapData.Hotspots[locationIndex].Latitude > mapData.Border.LatitudeMin
+                ;
         }
 
 

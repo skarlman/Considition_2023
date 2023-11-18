@@ -29,13 +29,13 @@ namespace Considition2023_Cs.Genetics
                 var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
             //ga.Termination = new Terminator(2415); //uppsala
             //ga.Termination = new Terminator(56826753); //göteborg
-            ga.Termination = new GenerationNumberTermination(5);
-            //ga.Termination = new FitnessStagnationTermination(runs);
+            //ga.Termination = new GenerationNumberTermination(10);
+            ga.Termination = new FitnessStagnationTermination(runs);
             ga.GenerationRan += (s, e) =>
                     Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
 
             Console.WriteLine("GA running...");
-            //ga.TaskExecutor = new ParallelTaskExecutor();
+            ga.TaskExecutor = new ParallelTaskExecutor();
             ga.Start();
 
                 Console.WriteLine();
