@@ -19,7 +19,7 @@ namespace Considition2023_Cs.Genetics
         public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData,int populationMinSize, int populationMaxSize, int runs, Api submissionApi, SandboxSolutionChromosome firstChromosome = null)
         {
             
-                var selection = new EliteSelection((int)Math.Floor(0.6*populationMinSize) );
+                var selection = new EliteSelection((int)Math.Floor(0.3*populationMinSize) );
               //  var selection = new RouletteWheelSelection();
                 var crossover = new SandboxUniformCrossover();
 

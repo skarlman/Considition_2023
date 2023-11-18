@@ -151,8 +151,8 @@ Console.ReadLine();
 
 SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
-    var populationMinSize = 100;
-    var populationMaxSize = 150;
+    var populationMinSize = 150;
+    var populationMaxSize = 200;
     var iterations = 100000;
 
     return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, api);
