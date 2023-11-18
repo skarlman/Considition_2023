@@ -24,16 +24,16 @@ namespace Considition2023_Cs.Genetics
                 var population = new Population(populationMinSize, populationMaxSize, firstChromosome);
 
                 var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
-            //ga.Termination = new Terminator(3566013); //uppsala
-            ga.Termination = new Terminator(56826753); //göteborg
+            //ga.Termination = new Terminator(2415); //uppsala
+            //ga.Termination = new Terminator(56826753); //göteborg
 
-            //ga.Termination = new FitnessStagnationTermination(runs);
-            ga.GenerationRan += (s, e) =>
-                    Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
+            ga.Termination = new FitnessStagnationTermination(runs);
+            //ga.GenerationRan += (s, e) =>
+            //        Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
 
             Console.WriteLine("GA running...");
-                ga.TaskExecutor = new ParallelTaskExecutor();
-                ga.Start();
+            ga.TaskExecutor = new ParallelTaskExecutor();
+            ga.Start();
 
                 Console.WriteLine();
                 Console.WriteLine($"Best solution found has fitness: {ga.BestChromosome.Fitness}");

@@ -12,21 +12,34 @@ namespace Considition2023_Cs.Genetics
     {
         public SolutionChromosome(int length) : base(length)
         {
+
         }
 
         public override IChromosome CreateNew()
         {
             var result = new SolutionChromosome(this.Length);
             result.CreateGenes();
+
             return result;
         }
         Random rng = new Random();
         public override Gene GenerateGene(int geneIndex)
         {
-            int smallMachines = rng.Next(6);
-            int bigMachines = rng.Next(6);
+            int smallMachines = rng.Next(3);
+            int bigMachines = rng.Next(3);
 
             return new Gene((smallMachines, bigMachines));
+        }
+
+
+        public static SolutionChromosome CreateAdamChromosome(int length)
+        {
+            var result = new SolutionChromosome(length);
+            for (int i = 0; i < length; i++)
+            {
+                result.ReplaceGene(i, new Gene((1, 0)));
+            }
+            return result;
         }
 
         internal SubmitSolution ToSolution(MapData mapData)

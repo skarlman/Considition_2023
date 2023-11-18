@@ -11,6 +11,8 @@ public static class MapNames
     public static string London { get; } = "london";
     public static string Berlin { get; } = "berlin";
     public static string Linkoping { get; } = "linkoping";
+    public static string GSandbox { get; } = "g-sandbox";
+    public static string SSandbox { get; } = "s-sandbox";
 
 }
 

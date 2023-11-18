@@ -11,15 +11,20 @@ namespace Considition2023_Cs.Game
     public class SubmitSolution
     {
         public required Dictionary<string, PlacedLocations> Locations { get; set; }
+        public double Longitude { get; set; }
+        public string LocationType { get; set; } = string.Empty;
     }
 
     public class PlacedLocations
     {
-        [Range(0, 5)]
+        [Range(0, 2)]
         public required int Freestyle9100Count { get; set; } = -1;
 
-        [Range(0, 5)]
+        [Range(0, 2)]
         public required int Freestyle3100Count { get; set; } = -1;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string LocationType { get; set; } = string.Empty;
     }
 
 
@@ -126,14 +131,14 @@ namespace Considition2023_Cs.Game
     {
         public Guid Id { get; set; }
         public string MapName { get; set; } = string.Empty;
-        public Score GameScore { get; set; }
+        public Score? GameScore { get; set; }
         public Guid TeamId { get; set; }
         public string TeamName { get; set; } = string.Empty;
         public int TotalFreestyle9100Count { get; set; } = 0;
         public int TotalFreestyle3100Count { get; set; } = 0;
         public double TotalLeasingCost { get; set; } = 0;
         public double TotalRevenue { get; set; } = 0;
-        public Dictionary<string, StoreLocationScoring> Locations { get; set; }
+        public Dictionary<string, StoreLocationScoring>? Locations { get; set; }
     }
 
     public class StoreLocationScoring
@@ -143,6 +148,7 @@ namespace Considition2023_Cs.Game
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Footfall { get; set; }
+        public int FootfallScale { get; set; }
         public double SalesVolume { get; set; }
         public double SalesCapacity { get; set; }
         public double LeasingCost { get; set; }
