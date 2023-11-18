@@ -153,7 +153,7 @@ SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
     var populationMinSize = 100;
     var populationMaxSize = 150;
-    var iterations = 1000;
+    var iterations = 100000;
 
     return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, api);
 }
@@ -161,7 +161,7 @@ SubmitSolution RunSandboxMapFitness(MapData mapData, GeneralData generalData)
 {
     var populationMinSize = 100;
     var populationMaxSize = 150;
-    var iterations = 10;
+    var iterations = 100000;
 
     return SandboxFitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations,api);
 }
