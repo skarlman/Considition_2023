@@ -6,14 +6,8 @@ using GeneticSharp;
 using System.Text;
 using System.Text.Json.Serialization;
 
-const string apikey = "3c5671b2-caaa-4644-b453-b788e5d83549";
 
 
-if (string.IsNullOrWhiteSpace(apikey))
-{
-    Console.WriteLine("Configure apiKey");
-    return;
-}
 
 Console.WriteLine($"1: {MapNames.Stockholm}");
 Console.WriteLine($"2: {MapNames.Goteborg}");
@@ -57,7 +51,7 @@ bool isHardcore = Scoring.SandBoxMaps.Contains(mapName.ToLower());
 
 HttpClient client = new();
 Api api = new(client);
-MapData mapData = await api.GetMapDataAsync(mapName, apikey);
+MapData mapData = await api.GetMapDataAsync(mapName, GlobalUtils.apiKey);
 GeneralData generalData = await api.GetGeneralDataAsync();
 
 
@@ -77,7 +71,7 @@ Console.WriteLine($"GameScore: {score.GameScore.Total}");
 
 Scoring.SandboxValidation(mapName, solution, mapData);
 
-GameData serverScore = await api.SumbitAsync(mapName, solution, apikey);
+GameData serverScore = await api.SumbitAsync(mapName, solution, GlobalUtils.apiKey);
 Console.WriteLine($"GameId: {serverScore.Id}");
 Console.WriteLine($"GameScore: {serverScore.GameScore.Total}");
 
@@ -150,25 +144,25 @@ if (isHardcore)
 
 GameData score_orig = Scoring.CalculateScore(mapName, solution_orig, mapData, generalData);
 Console.WriteLine($"GameScore: {score_orig.GameScore.Total}");
-GameData prodScore = await api.SumbitAsync(mapName, solution_orig, apikey);
+GameData prodScore = await api.SumbitAsync(mapName, solution_orig, GlobalUtils.apiKey);
 Console.WriteLine($"GameId: {prodScore.Id}");
 Console.WriteLine($"GameScore: {prodScore.GameScore.Total}");
 Console.ReadLine();
 
-static SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
+SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
     var populationMinSize = 100;
     var populationMaxSize = 150;
-    var iterations = 10;
+    var iterations = 1000;
 
-    return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations);
+    return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, api);
 }
-static SubmitSolution RunSandboxMapFitness(MapData mapData, GeneralData generalData)
+SubmitSolution RunSandboxMapFitness(MapData mapData, GeneralData generalData)
 {
     var populationMinSize = 100;
     var populationMaxSize = 150;
     var iterations = 10;
 
-    return SandboxFitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations);
+    return SandboxFitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations,api);
 }
 

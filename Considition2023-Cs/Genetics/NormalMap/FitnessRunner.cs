@@ -10,7 +10,10 @@ namespace Considition2023_Cs.Genetics.NormalMap
 {
     internal class FitnessRunner
     {
-        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize, int populationMaxSize, int runs, SolutionChromosome firstChromosome = null, bool isSandboxMap = false)
+        static DateTime LastSubmit = DateTime.MinValue;
+        static double LastSubmitScore = double.MinValue;
+        static object SubmissionLock = new object();
+        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize, int populationMaxSize, int runs, Api submissionApi, SolutionChromosome firstChromosome = null, bool isSandboxMap = false )
         {
 
             var selection = new EliteSelection((int)Math.Floor(0.6 * populationMinSize));
@@ -29,8 +32,35 @@ namespace Considition2023_Cs.Genetics.NormalMap
 
             ga.Termination = new FitnessStagnationTermination(runs);
             ga.GenerationRan += (s, e) =>
+            {
+                if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
+                {
                     Console.WriteLine($"Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
 
+                    lock (SubmissionLock)
+                    {
+                        if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
+                        {
+                            LastSubmit = DateTime.Now;
+                            if (LastSubmitScore < ga.BestChromosome.Fitness.Value)
+                            {
+                                try
+                                {
+                                    Console.WriteLine($"Last submission score [{LastSubmitScore}] < New best  [{ga.BestChromosome.Fitness.Value}], Submitting to API");
+                                    submissionApi.SumbitAsync(mapdata.MapName, ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                                    LastSubmitScore = ga.BestChromosome.Fitness.Value;
+                                    Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Exception when submitting solution: {ex.Message}");
+                                }
+                            }
+                        }
+
+                    }
+                }
+              };
             Console.WriteLine("GA running...");
             ga.TaskExecutor = new ParallelTaskExecutor();
             ga.Start();
