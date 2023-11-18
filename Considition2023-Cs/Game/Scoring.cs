@@ -8,6 +8,14 @@ namespace Considition2023_Cs.Game
 {
     internal class Scoring
     {
+
+        public const int maxGroceryStoreLarge = 5;
+        public const int maxGroceryStore = 20;
+        public const int maxConvenience = 20;
+        public const int maxGasStation = 8;
+        public const int maxKiosk = 3;
+
+
         public static List<string> SandBoxMaps { get; } = new List<string> { "s-sandbox", "g-sandbox" };
 
         public static GameData CalculateScore(string mapName, SubmitSolution solution, MapData mapEntity, GeneralData generalData)
@@ -295,7 +303,7 @@ namespace Considition2023_Cs.Game
             }
             return locations;
         }
-
+        
         public static string SandboxValidation(string inMapName, SubmitSolution request, MapData mapData)
         {
             int countGroceryStoreLarge = 0;
@@ -303,11 +311,6 @@ namespace Considition2023_Cs.Game
             int countConvenience = 0;
             int countGasStation = 0;
             int countKiosk = 0;
-            const int maxGroceryStoreLarge = 5;
-            const int maxGroceryStore = 20;
-            const int maxConvenience = 20;
-            const int maxGasStation = 8;
-            const int maxKiosk = 3;
             const int totalStores = maxGroceryStoreLarge + maxGroceryStore + maxConvenience + maxGasStation + maxKiosk;
             string numberErrorMsg = string.Format("locationName needs to start with 'location' and followed with a number larger than 0 and less than {0}.", totalStores + 1);
             string mapName = inMapName.ToLower();
@@ -380,6 +383,21 @@ namespace Considition2023_Cs.Game
                 }
             }
             return null;
+        }
+
+        public static bool ValidNumberOfStoreTypes(int countGroceryStoreLarge, int countGroceryStore, int countConvenience, int countGasStation, int countKiosk)
+        {
+            if (countGroceryStoreLarge > maxGroceryStoreLarge 
+                || countGroceryStore > maxGroceryStore 
+                || countConvenience > maxConvenience 
+                || countGasStation > maxGasStation 
+                || countKiosk > maxKiosk)
+            {
+                return false;
+            }
+            else
+                return true;
+
         }
 
         private static int DistanceBetweenPoint(double latitude1, double longitude1, double latitude2, double longitude2)

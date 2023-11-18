@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs.Genetics
+namespace Considition2023_Cs.Genetics.NormalMap
 {
     internal class SolutionChromosome : ChromosomeBase
     {
@@ -17,7 +17,7 @@ namespace Considition2023_Cs.Genetics
 
         public override IChromosome CreateNew()
         {
-            var result = new SolutionChromosome(this.Length);
+            var result = new SolutionChromosome(Length);
             result.CreateGenes();
 
             return result;
@@ -28,6 +28,18 @@ namespace Considition2023_Cs.Genetics
             int smallMachines = rng.Next(3);
             int bigMachines = rng.Next(3);
 
+            // in 50% of the cases, don't mix small and big machines
+            if (rng.Next(2) > 0)
+            {
+                if (rng.Next(2) > 0)
+                {
+                    smallMachines = 0;
+                }
+                else
+                {
+                    bigMachines = 0;
+                }
+            }
             return new Gene((smallMachines, bigMachines));
         }
 
@@ -61,13 +73,14 @@ namespace Considition2023_Cs.Genetics
                 };
                 ctr++;
 
-                if (value.Freestyle3100Count > 0 || value.Freestyle9100Count > 0) {
-                    result.Locations.Add(item.Key,value);
+                if (value.Freestyle3100Count > 0 || value.Freestyle9100Count > 0)
+                {
+                    result.Locations.Add(item.Key, value);
                 }
             }
 
-            return result; 
-        }   
+            return result;
+        }
     }
     public class Terminator : ITermination
     {

@@ -80,7 +80,7 @@ internal class Api
         request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
         HttpResponseMessage response = _httpClient.Send(request);
         string responseText = await response.Content.ReadAsStringAsync();
-        response.EnsureSuccessStatusCode();
+        // SERVER BUG? response.EnsureSuccessStatusCode();
         return JsonConvert.DeserializeObject<GameData>(responseText);
     }
 }

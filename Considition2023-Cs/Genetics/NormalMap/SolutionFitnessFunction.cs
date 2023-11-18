@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs.Genetics
+namespace Considition2023_Cs.Genetics.NormalMap
 {
     internal class SolutionFitnessFunction : IFitness
     {
@@ -15,8 +15,8 @@ namespace Considition2023_Cs.Genetics
 
         public SolutionFitnessFunction(MapData mapData, GeneralData generalData)
         {
-            this._mapData = mapData;
-            this._generalData = generalData;
+            _mapData = mapData;
+            _generalData = generalData;
         }
         public double Evaluate(IChromosome chromosome)
         {
