@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Text.Json;
 
-namespace Considition2023_Cs.Game;
+namespace Shared.Game;
 
-internal class Api
+public class Api
 {
     private readonly HttpClient _httpClient;
 
@@ -19,7 +19,7 @@ internal class Api
             Directory.CreateDirectory("datacache");
 
         string cacheFileName = $"datacache\\cached-MapData-{mapName}.json";
-        
+
         string responseText;
         if (!File.Exists(cacheFileName))
         {

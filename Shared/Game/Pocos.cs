@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs.Game
+namespace Shared.Game
 {
     public class SubmitSolution
     {

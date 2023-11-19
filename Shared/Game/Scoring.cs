@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Considition2023_Cs.Game
+namespace Shared.Game
 {
-    internal class Scoring
+    public class Scoring
     {
 
         public const int maxGroceryStoreLarge = 5;
@@ -198,7 +198,7 @@ namespace Considition2023_Cs.Game
                     double maxSpread = hotspot.Spread;
                     if (distanceInMeters <= maxSpread)
                     {
-                        double val = hotspot.Footfall * (1 - (distanceInMeters / maxSpread));
+                        double val = hotspot.Footfall * (1 - distanceInMeters / maxSpread);
                         kvpLoc.Value.Footfall += val / 10;
                     }
                 }
@@ -303,7 +303,7 @@ namespace Considition2023_Cs.Game
             }
             return locations;
         }
-        
+
         public static string SandboxValidation(string inMapName, SubmitSolution request, MapData mapData)
         {
             int countGroceryStoreLarge = 0;
@@ -339,7 +339,7 @@ namespace Considition2023_Cs.Game
                 //Validate long and lat
                 if (mapData.Border.LatitudeMin > kvp.Value.Latitude || mapData.Border.LatitudeMax < kvp.Value.Latitude)
                 {
-                    return  string.Format("Latitude is missing or out of bounds for location : {0}", kvp.Key);
+                    return string.Format("Latitude is missing or out of bounds for location : {0}", kvp.Key);
                 }
                 if (mapData.Border.LongitudeMin > kvp.Value.Longitude || mapData.Border.LongitudeMax < kvp.Value.Longitude)
                 {
@@ -387,10 +387,10 @@ namespace Considition2023_Cs.Game
 
         public static bool ValidNumberOfStoreTypes(int countGroceryStoreLarge, int countGroceryStore, int countConvenience, int countGasStation, int countKiosk)
         {
-            if (countGroceryStoreLarge > maxGroceryStoreLarge 
-                || countGroceryStore > maxGroceryStore 
-                || countConvenience > maxConvenience 
-                || countGasStation > maxGasStation 
+            if (countGroceryStoreLarge > maxGroceryStoreLarge
+                || countGroceryStore > maxGroceryStore
+                || countConvenience > maxConvenience
+                || countGasStation > maxGasStation
                 || countKiosk > maxKiosk)
             {
                 return false;

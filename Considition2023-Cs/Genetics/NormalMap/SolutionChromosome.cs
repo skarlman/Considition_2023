@@ -1,5 +1,5 @@
-﻿using Considition2023_Cs.Game;
-using GeneticSharp;
+﻿using GeneticSharp;
+using Shared.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +28,8 @@ namespace Considition2023_Cs.Genetics.NormalMap
             int smallMachines = rng.Next(3);
             int bigMachines = rng.Next(3);
 
-            // in 50% of the cases, don't mix small and big machines
-            if (rng.Next(2) > 0)
+            // in 67% of the cases, don't mix small and big machines
+            if (rng.Next(3) >0 )
             {
                 if (rng.Next(2) > 0)
                 {

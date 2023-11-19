@@ -1,8 +1,9 @@
 ﻿using Considition2023_Cs;
-using Considition2023_Cs.Game;
 using Considition2023_Cs.Genetics;
 using Considition2023_Cs.Genetics.NormalMap;
 using GeneticSharp;
+using Shared;
+using Shared.Game;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -151,8 +152,8 @@ Console.ReadLine();
 
 SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
-    var populationMinSize = 150;
-    var populationMaxSize = 200;
+    var populationMinSize = mapData.locations.Count()*3;
+    var populationMaxSize = mapData.locations.Count() * 4;
     var iterations = 100000;
 
     return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, api);

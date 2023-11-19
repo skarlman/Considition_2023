@@ -1,5 +1,5 @@
-﻿using Considition2023_Cs.Game;
-using GeneticSharp;
+﻿using GeneticSharp;
+using Shared.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,8 +65,8 @@ Scoring.maxConvenience +
                 bigMachines = rng.Next(3);
 
 
-                // in 50% of the cases, don't mix small and big machines
-                if (rng.Next(2) > 0)
+                // in 33% of the cases, don't mix small and big machines
+                if (rng.Next(3) < 1)
                 {
                     if (rng.Next(2) > 0)
                     {

@@ -1,5 +1,4 @@
-﻿using Considition2023_Cs.Game;
-using GeneticSharp;
+﻿using GeneticSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;

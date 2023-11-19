@@ -1,7 +1,8 @@
-﻿using Considition2023_Cs.Game;
-using Considition2023_Cs.Genetics.NormalMap;
+﻿using Considition2023_Cs.Genetics.NormalMap;
 using Considition2023_Cs.Genetics.SandboxMap;
 using GeneticSharp;
+using Shared;
+using Shared.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace Considition2023_Cs.Genetics
                 var population = new Population(populationMinSize, populationMaxSize, firstChromosome);
 
                 var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
+            ga.Reinsertion = new ElitistReinsertion();
             //ga.Termination = new Terminator(2415); //uppsala
             //ga.Termination = new Terminator(56826753); //göteborg
             //ga.Termination = new GenerationNumberTermination(10);
