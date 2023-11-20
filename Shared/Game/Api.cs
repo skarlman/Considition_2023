@@ -7,10 +7,18 @@ public class Api
 {
     private readonly HttpClient _httpClient;
 
-    public Api(HttpClient httpClient)
+    public Api(HttpClient httpClient, bool useLocalProxy=false)
     {
         _httpClient = httpClient;
-        httpClient.BaseAddress = new Uri("https://api.considition.com/");
+        if (useLocalProxy)
+        {
+            httpClient.BaseAddress = new Uri("https://localhost:7263/");
+
+        }
+        else
+        {
+            httpClient.BaseAddress = new Uri("https://api.considition.com/");
+        }
     }
 
     public async Task<MapData> GetMapDataAsync(string mapName, string apiKey)
@@ -71,8 +79,13 @@ public class Api
         return JsonConvert.DeserializeObject<GameData>(responseText);
     }
 
-    public async Task<GameData> SumbitAsync(string mapName, SubmitSolution solution, string apiKey)
+    public async Task<GameData> SumbitAsync(string mapName, SubmitSolution solution, string apiKey, double? score = null)
     {
+        if (score.HasValue)
+        {
+            await Console.Out.WriteLineAsync($" Score [{score.Value}] for solution on map [{mapName}]");
+        }
+
         HttpRequestMessage request = new();
         request.Method = HttpMethod.Post;
         request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
@@ -80,7 +93,7 @@ public class Api
         request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
         HttpResponseMessage response = _httpClient.Send(request);
         string responseText = await response.Content.ReadAsStringAsync();
-        // SERVER BUG? response.EnsureSuccessStatusCode();
+        response.EnsureSuccessStatusCode();
         return JsonConvert.DeserializeObject<GameData>(responseText);
     }
 }
