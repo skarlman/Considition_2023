@@ -52,7 +52,7 @@ Console.Title = $"{mapName} [Started...]";
 bool isHardcore = Scoring.SandBoxMaps.Contains(mapName.ToLower());
 
 HttpClient client = new();
-Api api = new(client, false);
+Api api = new(client, true);
 MapData mapData = await api.GetMapDataAsync(mapName, GlobalUtils.apiKey);
 GeneralData generalData = await api.GetGeneralDataAsync();
 
