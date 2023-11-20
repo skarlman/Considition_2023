@@ -41,6 +41,7 @@ namespace Considition2023_Cs.Genetics
                 if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
                 {
                     Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
+                    Console.Title = $"{mapdata.MapName} [{ga.BestChromosome.Fitness.Value}]";
 
                     lock (SubmissionLock)
                     {
@@ -67,7 +68,7 @@ namespace Considition2023_Cs.Genetics
                 }
             };
             Console.WriteLine("GA running...");
-            ga.TaskExecutor = new ParallelTaskExecutor();
+            //ga.TaskExecutor = new ParallelTaskExecutor();
             ga.Start();
 
                 Console.WriteLine();

@@ -28,24 +28,49 @@ public class Api
 
         string cacheFileName = $"datacache\\cached-MapData-{mapName}.json";
 
-        string responseText;
-        if (!File.Exists(cacheFileName))
+        try
         {
-            HttpRequestMessage request = new();
-            request.Method = HttpMethod.Get;
-            request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
-            request.Headers.Add("x-api-key", apiKey);
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            responseText = await response.Content.ReadAsStringAsync();
-            File.WriteAllText(cacheFileName, responseText);
-        }
-        else
-        {
-            responseText = File.ReadAllText(cacheFileName);
-        }
+            string responseText;
+            if (!File.Exists(cacheFileName))
+            {
+                HttpRequestMessage request = new();
+                request.Method = HttpMethod.Get;
+                request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+                request.Headers.Add("x-api-key", apiKey);
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                responseText = await response.Content.ReadAsStringAsync();
+                File.WriteAllText(cacheFileName, responseText);
+            }
+            else
+            {
+                responseText = File.ReadAllText(cacheFileName);
+            }
 
-        return JsonConvert.DeserializeObject<MapData>(responseText);
+            return JsonConvert.DeserializeObject<MapData>(responseText);
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync($"GETMAP {mapName} EXCEPTION! {ex.Message}, retrying...");
+            string responseText;
+            if (!File.Exists(cacheFileName))
+            {
+                HttpRequestMessage request = new();
+                request.Method = HttpMethod.Get;
+                request.RequestUri = new Uri($"/api/game/getmapdata?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+                request.Headers.Add("x-api-key", apiKey);
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                responseText = await response.Content.ReadAsStringAsync();
+                File.WriteAllText(cacheFileName, responseText);
+            }
+            else
+            {
+                responseText = File.ReadAllText(cacheFileName);
+            }
+
+            return JsonConvert.DeserializeObject<MapData>(responseText);
+        }
     }
 
     public async Task<GeneralData> GetGeneralDataAsync()
@@ -55,20 +80,43 @@ public class Api
 
         string cacheFileName = $"datacache\\cached-GeneralData.json";
 
-        string responseText;
-        if (!File.Exists(cacheFileName))
+        try
         {
-            var response = await _httpClient.GetAsync("/api/game/getgeneralgamedata");
-            response.EnsureSuccessStatusCode();
-            responseText = await response.Content.ReadAsStringAsync();
-            File.WriteAllText(cacheFileName, responseText);
-        }
-        else
-        {
-            responseText = File.ReadAllText(cacheFileName);
-        }
+            string responseText;
+            if (!File.Exists(cacheFileName))
+            {
+                var response = await _httpClient.GetAsync("/api/game/getgeneralgamedata");
+                response.EnsureSuccessStatusCode();
+                responseText = await response.Content.ReadAsStringAsync();
+                File.WriteAllText(cacheFileName, responseText);
+            }
+            else
+            {
+                responseText = File.ReadAllText(cacheFileName);
+            }
 
-        return JsonConvert.DeserializeObject<GeneralData>(responseText);
+            return JsonConvert.DeserializeObject<GeneralData>(responseText);
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync($"GETGENERALDATA EXCEPTION! {ex.Message}, retrying...");
+
+            string responseText;
+            if (!File.Exists(cacheFileName))
+            {
+                var response = await _httpClient.GetAsync("/api/game/getgeneralgamedata");
+                response.EnsureSuccessStatusCode();
+                responseText = await response.Content.ReadAsStringAsync();
+                File.WriteAllText(cacheFileName, responseText);
+            }
+            else
+            {
+                responseText = File.ReadAllText(cacheFileName);
+            }
+
+            return JsonConvert.DeserializeObject<GeneralData>(responseText);
+            
+        }
     }
 
     public async Task<GameData> GetGameAsync(Guid id)
@@ -86,14 +134,30 @@ public class Api
             await Console.Out.WriteLineAsync($" Score [{score.Value}] for solution on map [{mapName}]");
         }
 
-        HttpRequestMessage request = new();
-        request.Method = HttpMethod.Post;
-        request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
-        request.Headers.Add("x-api-key", apiKey);
-        request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
-        HttpResponseMessage response = _httpClient.Send(request);
-        string responseText = await response.Content.ReadAsStringAsync();
-        response.EnsureSuccessStatusCode();
-        return JsonConvert.DeserializeObject<GameData>(responseText);
+        try
+        {
+            HttpRequestMessage request = new();
+            request.Method = HttpMethod.Post;
+            request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+            request.Headers.Add("x-api-key", apiKey);
+            request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = _httpClient.Send(request);
+            string responseText = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GameData>(responseText);
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync($"SUBMIT EXCEPTION! {ex.Message}, retrying...");
+            HttpRequestMessage request = new();
+            request.Method = HttpMethod.Post;
+            request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+            request.Headers.Add("x-api-key", apiKey);
+            request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = _httpClient.Send(request);
+            string responseText = await response.Content.ReadAsStringAsync();
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GameData>(responseText);
+        }
     }
 }

@@ -47,11 +47,12 @@ if (mapName is null)
     return;
 }
 
+Console.Title = $"{mapName} [Started...]";
 
 bool isHardcore = Scoring.SandBoxMaps.Contains(mapName.ToLower());
 
 HttpClient client = new();
-Api api = new(client, true);
+Api api = new(client, false);
 MapData mapData = await api.GetMapDataAsync(mapName, GlobalUtils.apiKey);
 GeneralData generalData = await api.GetGeneralDataAsync();
 
@@ -152,9 +153,9 @@ Console.ReadLine();
 
 SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
-    var populationMinSize = mapData.locations.Count()*3;
-    var populationMaxSize = mapData.locations.Count() * 4;
-    var iterations = 100000;
+    var populationMinSize = mapData.locations.Count();
+    var populationMaxSize = mapData.locations.Count() * 2;
+    var iterations = 1000000;
 
     return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, api);
 }
@@ -162,7 +163,7 @@ SubmitSolution RunSandboxMapFitness(MapData mapData, GeneralData generalData)
 {
     var populationMinSize = 100;
     var populationMaxSize = 150;
-    var iterations = 100000;
+    var iterations = 1000000;
 
     return SandboxFitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations,api);
 }

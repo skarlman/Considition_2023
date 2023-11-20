@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Considition2023_Cs.Genetics
 {
-    
+
     internal class SandboxSolutionChromosome : ChromosomeBase
     {
         const int totalStores =
-Scoring.maxGroceryStoreLarge +
-Scoring.maxGroceryStore +
-Scoring.maxConvenience +
-    Scoring.maxGasStation +
-    Scoring.maxKiosk;
+                Scoring.maxGroceryStoreLarge +
+                Scoring.maxGroceryStore +
+                Scoring.maxConvenience +
+                Scoring.maxGasStation +
+                Scoring.maxKiosk;
 
         public SandboxSolutionChromosome(MapData mapData, GeneralData generalData) : base(totalStores)
         {
@@ -27,7 +27,7 @@ Scoring.maxConvenience +
 
         public override IChromosome CreateNew()
         {
-            
+
             var result = new SandboxSolutionChromosome(_mapData, _generalData);
             do
             {
@@ -56,11 +56,8 @@ Scoring.maxConvenience +
 
             do
             {
-                do
-                {
-                    locationIndex = rng.Next(NumLocations);
-                } while (!IsValidHotSpotLocation(locationIndex, _mapData));
-
+                locationIndex = rng.Next(NumLocations);
+                
                 smallMachines = rng.Next(3);
                 bigMachines = rng.Next(3);
 
@@ -79,7 +76,7 @@ Scoring.maxConvenience +
                 }
             } while (smallMachines == 0 && bigMachines == 0);
 
-            return new Gene((locationIndex,smallMachines, bigMachines));
+            return new Gene((locationIndex, smallMachines, bigMachines));
         }
 
         private bool IsValidHotSpotLocation(int locationIndex, MapData mapData)
@@ -132,6 +129,18 @@ Scoring.maxConvenience +
                     Longitude = _mapData.Hotspots[locationIndex].Longitude,
                     Latitude = _mapData.Hotspots[locationIndex].Latitude
                 };
+                
+                if (value.Longitude > mapData.Border.LongitudeMax)
+                    value.Longitude = mapData.Border.LongitudeMax;
+
+                if (value.Longitude < mapData.Border.LongitudeMin)
+                    value.Longitude = mapData.Border.LongitudeMin;
+
+                if (value.Latitude > mapData.Border.LatitudeMax)
+                    value.Latitude = mapData.Border.LatitudeMax;
+
+                if (value.Latitude < mapData.Border.LatitudeMin)
+                    value.Latitude = mapData.Border.LatitudeMin;
 
                 result.Locations.Add($"location{ctr + 1}", value);
 
@@ -149,6 +158,17 @@ Scoring.maxConvenience +
                     Longitude = _mapData.Hotspots[locationIndex].Longitude,
                     Latitude = _mapData.Hotspots[locationIndex].Latitude
                 };
+                if (value.Longitude > mapData.Border.LongitudeMax)
+                    value.Longitude = mapData.Border.LongitudeMax;
+
+                if (value.Longitude < mapData.Border.LongitudeMin)
+                    value.Longitude = mapData.Border.LongitudeMin;
+
+                if (value.Latitude > mapData.Border.LatitudeMax)
+                    value.Latitude = mapData.Border.LatitudeMax;
+
+                if (value.Latitude < mapData.Border.LatitudeMin)
+                    value.Latitude = mapData.Border.LatitudeMin;
 
                 result.Locations.Add($"location{ctr + 1}", value);
 
@@ -166,6 +186,17 @@ Scoring.maxConvenience +
                     Longitude = _mapData.Hotspots[locationIndex].Longitude,
                     Latitude = _mapData.Hotspots[locationIndex].Latitude
                 };
+                if (value.Longitude > mapData.Border.LongitudeMax)
+                    value.Longitude = mapData.Border.LongitudeMax;
+
+                if (value.Longitude < mapData.Border.LongitudeMin)
+                    value.Longitude = mapData.Border.LongitudeMin;
+
+                if (value.Latitude > mapData.Border.LatitudeMax)
+                    value.Latitude = mapData.Border.LatitudeMax;
+
+                if (value.Latitude < mapData.Border.LatitudeMin)
+                    value.Latitude = mapData.Border.LatitudeMin;
 
                 result.Locations.Add($"location{ctr + 1}", value);
 
@@ -183,12 +214,23 @@ Scoring.maxConvenience +
                     Longitude = _mapData.Hotspots[locationIndex].Longitude,
                     Latitude = _mapData.Hotspots[locationIndex].Latitude
                 };
+                if (value.Longitude > mapData.Border.LongitudeMax)
+                    value.Longitude = mapData.Border.LongitudeMax;
+
+                if (value.Longitude < mapData.Border.LongitudeMin)
+                    value.Longitude = mapData.Border.LongitudeMin;
+
+                if (value.Latitude > mapData.Border.LatitudeMax)
+                    value.Latitude = mapData.Border.LatitudeMax;
+
+                if (value.Latitude < mapData.Border.LatitudeMin)
+                    value.Latitude = mapData.Border.LatitudeMin;
 
                 result.Locations.Add($"location{ctr + 1}", value);
 
                 ctr++;
             }
-            
+
             for (int i = 0; i < Scoring.maxKiosk; i++)
             {
                 var currentGene = ((int, int, int))GetGene(ctr).Value;
@@ -201,6 +243,17 @@ Scoring.maxConvenience +
                     Longitude = _mapData.Hotspots[locationIndex].Longitude,
                     Latitude = _mapData.Hotspots[locationIndex].Latitude
                 };
+                if (value.Longitude > mapData.Border.LongitudeMax)
+                    value.Longitude = mapData.Border.LongitudeMax;
+
+                if (value.Longitude < mapData.Border.LongitudeMin)
+                    value.Longitude = mapData.Border.LongitudeMin;
+
+                if (value.Latitude > mapData.Border.LatitudeMax)
+                    value.Latitude = mapData.Border.LatitudeMax;
+
+                if (value.Latitude < mapData.Border.LatitudeMin)
+                    value.Latitude = mapData.Border.LatitudeMin;
 
                 result.Locations.Add($"location{ctr + 1}", value);
 
@@ -208,9 +261,9 @@ Scoring.maxConvenience +
             }
 
             //Scoring.SandboxValidation(_mapData.MapName, result, _mapData);
-            
-            return result; 
-        }   
+
+            return result;
+        }
     }
     public class Terminator : ITermination
     {
