@@ -15,7 +15,7 @@ namespace Considition2023_Cs.Genetics.NormalMap
         static DateTime LastSubmit = DateTime.MinValue;
         static double LastSubmitScore = double.MinValue;
         static object SubmissionLock = new object();
-        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize, int populationMaxSize, int runs, Api submissionApi, SolutionChromosome firstChromosome = null, bool isSandboxMap = false )
+        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize, int populationMaxSize, int runs, Api submissionApi, Api backupApi, SolutionChromosome firstChromosome = null, bool isSandboxMap = false )
         {
             //SubmitSolution result = new() { Locations = new()};
 
@@ -57,7 +57,7 @@ namespace Considition2023_Cs.Genetics.NormalMap
                 ga.Termination = new FitnessStagnationTermination(runs);
                 ga.GenerationRan += (s, e) =>
                 {
-                    UpdateStatusAndSubmit(mapdata, submissionApi, ga);
+                    UpdateStatusAndSubmit(mapdata, submissionApi, backupApi, ga);
                 };
                 Console.WriteLine("GA running...");
                 //ga.TaskExecutor = new ParallelTaskExecutor();
@@ -78,7 +78,7 @@ namespace Considition2023_Cs.Genetics.NormalMap
             return ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata);
             }
 
-        private static void UpdateStatusAndSubmit(MapData mapdata, Api submissionApi, GeneticAlgorithm ga)
+        private static void UpdateStatusAndSubmit(MapData mapdata, Api submissionApi, Api backupApi, GeneticAlgorithm ga)
         {
             if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
             {
@@ -102,7 +102,20 @@ namespace Considition2023_Cs.Genetics.NormalMap
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine($"Exception when submitting solution: {ex.Message}");
+                                Console.WriteLine($"Exception when submitting solution, retrying with backup API: {ex.Message}");
+
+                                try
+                                {
+                                    submissionApi.SumbitAsync(mapdata.MapName, ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                                    LastSubmitScore = ga.BestChromosome.Fitness.Value;
+                                    Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
+                                }
+                                catch (Exception ex2)
+                                {
+                                    Console.WriteLine($" Exception when submitting solution with backup API, giving up: {ex.Message}");
+
+                                }
+
                             }
                         }
                     }

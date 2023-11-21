@@ -17,7 +17,7 @@ namespace Considition2023_Cs.Genetics
         static double LastSubmitScore = double.MinValue;
         static object SubmissionLock = new object();
 
-        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData,int populationMinSize, int populationMaxSize, int runs, Api submissionApi, SandboxSolutionChromosome firstChromosome = null)
+        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData,int populationMinSize, int populationMaxSize, int runs, Api submissionApi, Api backupApi, SandboxSolutionChromosome firstChromosome = null)
         {
             
                 var selection = new EliteSelection((int)Math.Floor(0.6*populationMinSize) );
@@ -59,7 +59,19 @@ namespace Considition2023_Cs.Genetics
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine($"Exception when submitting solution: {ex.Message}");
+                                    Console.WriteLine($"Exception when submitting solution, retrying with backup API: {ex.Message}");
+
+                                    try
+                                    {
+                                        submissionApi.SumbitAsync(mapdata.MapName, ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                                        LastSubmitScore = ga.BestChromosome.Fitness.Value;
+                                        Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
+                                    }
+                                    catch (Exception ex2)
+                                    {
+                                        Console.WriteLine($" Exception when submitting solution with backup API, giving up: {ex.Message}");
+                                        
+                                    }
                                 }
                             }
                         }
