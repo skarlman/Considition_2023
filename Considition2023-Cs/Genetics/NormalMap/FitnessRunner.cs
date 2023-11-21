@@ -30,7 +30,7 @@ namespace Considition2023_Cs.Genetics.NormalMap
                 //firstChromosome = bestChromosomeSoFar;
                 IPopulation population = new Population(populationMinSize, populationMaxSize, firstChromosome);
                 
-                ISelection selection = new EliteSelection((int)Math.Floor(0.3 * populationMinSize));
+                ISelection selection = new EliteSelection((int)Math.Floor(0.6 * populationMinSize));
             ICrossover crossover = new UniformCrossover();
             IMutation mutation = new UniformMutation(true);
             //Console.WriteLine($" -- StartingGeneration {population.GenerationsNumber} Best Score: {bestChromosomeSoFar?.Fitness ?? -1} --");

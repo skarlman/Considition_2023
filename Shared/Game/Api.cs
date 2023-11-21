@@ -134,30 +134,34 @@ public class Api
             await Console.Out.WriteLineAsync($" Score [{score.Value}] for solution on map [{mapName}]");
         }
 
-        try
+        for (int i = 0; i < 3; i++)
         {
-            HttpRequestMessage request = new();
-            request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
-            request.Headers.Add("x-api-key", apiKey);
-            request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage response = _httpClient.Send(request);
-            string responseText = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GameData>(responseText);
+            try
+            {
+                string responseText = await SendToServer(mapName, solution, apiKey);
+                return JsonConvert.DeserializeObject<GameData>(responseText);
+            }
+            catch (Exception ex)
+            {
+                await Console.Out.WriteLineAsync($"SUBMIT EXCEPTION! {ex.Message}, retrying {i+1}...");
+
+                await Task.Delay(10);
+            }
         }
-        catch (Exception ex)
-        {
-            await Console.Out.WriteLineAsync($"SUBMIT EXCEPTION! {ex.Message}, retrying...");
-            HttpRequestMessage request = new();
-            request.Method = HttpMethod.Post;
-            request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
-            request.Headers.Add("x-api-key", apiKey);
-            request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
-            HttpResponseMessage response = _httpClient.Send(request);
-            string responseText = await response.Content.ReadAsStringAsync();
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GameData>(responseText);
-        }
+
+        throw new Exception($"Failed to submit solution to server for {mapName} score: {score}");
+    }
+
+    private async Task<string> SendToServer(string mapName, SubmitSolution solution, string apiKey)
+    {
+        HttpRequestMessage request = new();
+        request.Method = HttpMethod.Post;
+        request.RequestUri = new Uri($"/api/Game/submitSolution?mapName={Uri.EscapeDataString(mapName)}", UriKind.Relative);
+        request.Headers.Add("x-api-key", apiKey);
+        request.Content = new StringContent(JsonConvert.SerializeObject(solution), System.Text.Encoding.UTF8, "application/json");
+        HttpResponseMessage response = _httpClient.Send(request);
+        string responseText = await response.Content.ReadAsStringAsync();
+        response.EnsureSuccessStatusCode();
+        return responseText;
     }
 }
