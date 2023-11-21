@@ -51,9 +51,9 @@ Console.Title = $"{mapName} [Started...]";
 
 bool isHardcore = Scoring.SandBoxMaps.Contains(mapName.ToLower());
 
-HttpClient client = new();
-Api submitSolutionApi = new(client, true);
-Api realApi = new(client, false);
+;
+Api submitSolutionApi = new(new HttpClient(), true);
+Api realApi = new(new HttpClient(), false);
 MapData mapData = await realApi.GetMapDataAsync(mapName, GlobalUtils.apiKey);
 GeneralData generalData = await realApi.GetGeneralDataAsync();
 
