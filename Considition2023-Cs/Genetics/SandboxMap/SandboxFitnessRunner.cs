@@ -63,7 +63,7 @@ namespace Considition2023_Cs.Genetics
 
                                     try
                                     {
-                                        submissionApi.SumbitAsync(mapdata.MapName, ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                                        backupApi.SumbitAsync(mapdata.MapName, ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
                                         LastSubmitScore = ga.BestChromosome.Fitness.Value;
                                         Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
                                     }
