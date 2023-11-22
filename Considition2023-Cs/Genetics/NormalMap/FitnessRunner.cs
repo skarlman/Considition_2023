@@ -1,178 +1,147 @@
 ﻿using GeneticSharp;
 using Shared;
 using Shared.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Considition2023_Cs.Genetics.NormalMap
+namespace Considition2023_Cs.Genetics.NormalMap;
+
+internal class FitnessRunner
 {
-    internal class FitnessRunner
+    private static DateTime LastSubmit = DateTime.MinValue;
+    private static double LastSubmitScore = double.MinValue;
+    private static readonly object SubmissionLock = new();
+
+    public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize,
+        int populationMaxSize, int runs, Api submissionApi, Api backupApi, SolutionChromosome firstChromosome = null,
+        bool isSandboxMap = false)
     {
-        static DateTime LastSubmit = DateTime.MinValue;
-        static double LastSubmitScore = double.MinValue;
-        static object SubmissionLock = new object();
-        public static SubmitSolution RunEvolution(MapData mapdata, GeneralData generalData, int populationMinSize, int populationMaxSize, int runs, Api submissionApi, Api backupApi, SolutionChromosome firstChromosome = null, bool isSandboxMap = false )
+        var fitness = new SolutionFitnessFunction(mapdata, generalData);
+
+        firstChromosome ??= new SolutionChromosome(mapdata.locations.Count());
+
+
+        IPopulation population = new Population(populationMinSize, populationMaxSize, firstChromosome);
+
+        ISelection selection = new EliteSelection((int)Math.Floor(0.6 * populationMinSize));
+        ICrossover crossover = new UniformCrossover();
+        IMutation mutation = new UniformMutation(true);
+
+
+        var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
+        ga.Reinsertion = new ElitistReinsertion();
+
+
+        ga.Termination = new FitnessStagnationTermination(runs);
+        //ga.Termination = new Genetics.Terminator(5500);
+
+
+        ga.GenerationRan += (s, e) => { UpdateStatusAndSubmit(mapdata, submissionApi, backupApi, ga); };
+        Console.WriteLine("GA running...");
+        ga.TaskExecutor = new ParallelTaskExecutor();
+        ga.Start();
+
+        Console.WriteLine();
+        Console.WriteLine($"Best solution found has fitness: {ga.BestChromosome.Fitness}");
+        Console.WriteLine($"Elapsed time: {ga.TimeEvolving}");
+
+
+        return ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata);
+    }
+
+    private static void UpdateStatusAndSubmit(MapData mapdata, Api submissionApi, Api backupApi, GeneticAlgorithm ga)
+    {
+        if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
         {
-            //SubmitSolution result = new() { Locations = new()};
+            Console.WriteLine(
+                $"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
 
-            var fitness = new SolutionFitnessFunction(mapdata, generalData);
-            
-            firstChromosome ??= new SolutionChromosome(mapdata.locations.Count());
+            Console.Title = $"{mapdata.MapName} [{ga.BestChromosome.Fitness.Value}]";
 
-            //SolutionChromosome bestChromosomeSoFar = firstChromosome;
-            
-            //for (int i = 0; i < 100; i++)
-            //{
-                //firstChromosome = bestChromosomeSoFar;
-                IPopulation population = new Population(populationMinSize, populationMaxSize, firstChromosome);
-                
-                ISelection selection = new EliteSelection((int)Math.Floor(0.6 * populationMinSize));
-            ICrossover crossover = new UniformCrossover();
-            IMutation mutation = new UniformMutation(true);
-            //Console.WriteLine($" -- StartingGeneration {population.GenerationsNumber} Best Score: {bestChromosomeSoFar?.Fitness ?? -1} --");
-
-            //ISelection selection = i%2==0 
-            //        ?  ChooseSelection(populationMinSize)
-            //        : new EliteSelection((int)Math.Floor(0.3 * populationMinSize));
-            //    Console.WriteLine($" New Selection: {selection.GetType().Name}");
-
-
-            //ICrossover crossover = i % 2 == 0
-            //        ? ChooseCrossover()
-            //        : new UniformCrossover();
-            //    Console.WriteLine($" New Crossover: {crossover.GetType().Name}");
-
-            //IMutation mutation = i % 2 == 0
-            //        ? ChooseMutation()
-            //        : new UniformMutation(true);
-            //    Console.WriteLine($" New Mutation: {mutation.GetType().Name}");
-
-
-                var ga = new GeneticAlgorithm(population, fitness, selection, crossover, mutation);
-                ga.Reinsertion = new ElitistReinsertion() ;
-                ga.Termination = new FitnessStagnationTermination(runs);
-                ga.GenerationRan += (s, e) =>
-                {
-                    UpdateStatusAndSubmit(mapdata, submissionApi, backupApi, ga);
-                };
-                Console.WriteLine("GA running...");
-                //ga.TaskExecutor = new ParallelTaskExecutor();
-                ga.Start();
-
-                Console.WriteLine();
-                Console.WriteLine($"Best solution found has fitness: {ga.BestChromosome.Fitness}");
-                Console.WriteLine($"Elapsed time: {ga.TimeEvolving}");
-                //bestChromosomeSoFar = bestChromosomeSoFar.Fitness.HasValue && bestChromosomeSoFar.Fitness > ((SolutionChromosome)ga.BestChromosome).Fitness
-                //    ? bestChromosomeSoFar
-                //    : (SolutionChromosome)ga.BestChromosome;
-                    //? (((SolutionChromosome)ga.BestChromosome.Clone()))
-                    //: bestChromosomeSoFar;
-                //result = ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata);
-            //}
-
-
-            return ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata);
-            }
-
-        private static void UpdateStatusAndSubmit(MapData mapdata, Api submissionApi, Api backupApi, GeneticAlgorithm ga)
-        {
-            if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
+            lock (SubmissionLock)
             {
-                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Generation {ga.GenerationsNumber}. Best fitness: {ga.BestChromosome.Fitness.Value}");
-
-                Console.Title = $"{mapdata.MapName} [{ga.BestChromosome.Fitness.Value}]";
-
-                lock (SubmissionLock)
+                if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
                 {
-                    if ((DateTime.Now - LastSubmit).TotalSeconds > GlobalUtils.secondsBetweenApiSubmits)
-                    {
-                        LastSubmit = DateTime.Now;
-                        if (LastSubmitScore < ga.BestChromosome.Fitness.Value)
+                    LastSubmit = DateTime.Now;
+                    if (LastSubmitScore < ga.BestChromosome.Fitness.Value)
+                        try
                         {
+                            Console.WriteLine(
+                                $"Last submission score [{LastSubmitScore}] < New best  [{ga.BestChromosome.Fitness.Value}], Submitting to API");
+                            submissionApi.SumbitAsync(mapdata.MapName,
+                                ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                            LastSubmitScore = ga.BestChromosome.Fitness.Value;
+                            Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(
+                                $"Exception when submitting solution, retrying with backup API: {ex.Message}");
+
                             try
                             {
-                                Console.WriteLine($"Last submission score [{LastSubmitScore}] < New best  [{ga.BestChromosome.Fitness.Value}], Submitting to API");
-                                submissionApi.SumbitAsync(mapdata.MapName, ((SolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
+                                backupApi.SumbitAsync(mapdata.MapName,
+                                    ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata),
+                                    GlobalUtils.apiKey).Wait();
                                 LastSubmitScore = ga.BestChromosome.Fitness.Value;
                                 Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
                             }
-                            catch (Exception ex)
+                            catch (Exception ex2)
                             {
-                                Console.WriteLine($"Exception when submitting solution, retrying with backup API: {ex.Message}");
-
-                                try
-                                {
-                                    backupApi.SumbitAsync(mapdata.MapName, ((SandboxSolutionChromosome)ga.BestChromosome).ToSolution(mapdata), GlobalUtils.apiKey).Wait();
-                                    LastSubmitScore = ga.BestChromosome.Fitness.Value;
-                                    Console.WriteLine($"New best submitted score: [{LastSubmitScore}]");
-                                }
-                                catch (Exception ex2)
-                                {
-                                    Console.WriteLine($" Exception when submitting solution with backup API, giving up: {ex.Message}");
-
-                                }
-
+                                Console.WriteLine(
+                                    $" Exception when submitting solution with backup API, giving up: {ex.Message}");
                             }
                         }
-                    }
-
                 }
             }
         }
+    }
 
-        private static IMutation ChooseMutation()
+    private static IMutation ChooseMutation()
+    {
+        var chosen = new List<IMutation>
         {
-            var chosen = new List<IMutation>()
+            new DisplacementMutation(),
+            new InsertionMutation(),
+            new PartialShuffleMutation(),
+            new ReverseSequenceMutation(),
+            new TworsMutation()
+        }.OrderBy(_ => Guid.NewGuid()).First();
+
+        return chosen;
+    }
+
+    private static ICrossover ChooseCrossover()
+    {
+        //  var selection = new RouletteWheelSelection();
+        var chosen = new List<ICrossover>
+        {
+            //new AlternatingPositionCrossover(),
+            //new CutAndSpliceCrossover(),
+            //new CycleCrossover(),
+            new OnePointCrossover(),
+            //new OrderedCrossover(),
+            //new PartiallyMappedCrossover(),
+            //new PositionBasedCrossover(),
+            new ThreeParentCrossover(),
+            new TwoPointCrossover(),
+            new VotingRecombinationCrossover()
+        }.OrderBy(_ => Guid.NewGuid()).First();
+
+        return chosen;
+    }
+
+    private static ISelection ChooseSelection(int populationMinSize)
+    {
+        var chosen = new List<ISelection>
             {
-                new DisplacementMutation(),
-                new InsertionMutation(),
-                new PartialShuffleMutation(),
-                new ReverseSequenceMutation(),
-                new TworsMutation(),
-
-            }.OrderBy(_ => Guid.NewGuid()).First();
-
-            return chosen;
-        }
-
-        private static ICrossover ChooseCrossover()
-        {
-            //  var selection = new RouletteWheelSelection();
-            ICrossover chosen = new List<ICrossover>() {
-                //new AlternatingPositionCrossover(),
-                //new CutAndSpliceCrossover(),
-                //new CycleCrossover(),
-                new OnePointCrossover(),
-                //new OrderedCrossover(),
-                //new PartiallyMappedCrossover(),
-                //new PositionBasedCrossover(),
-                new ThreeParentCrossover(),
-                new TwoPointCrossover(),
-                new VotingRecombinationCrossover()
-            }.OrderBy(_ => Guid.NewGuid()).First();
-
-            return chosen;
-        }
-
-        private static ISelection ChooseSelection(int populationMinSize)
-        {
-
-            ISelection chosen = new List<ISelection>() {
-
-            new RankSelection(),
-            new RouletteWheelSelection(),
-            new StochasticUniversalSamplingSelection(),
-            new TournamentSelection(),
-            new TruncationSelection() }
+                new RankSelection(),
+                new RouletteWheelSelection(),
+                new StochasticUniversalSamplingSelection(),
+                new TournamentSelection(),
+                new TruncationSelection()
+            }
             .OrderBy(_ => Guid.NewGuid())
             .First();
 
-            return chosen;
-            
-        }
+        return chosen;
     }
 }

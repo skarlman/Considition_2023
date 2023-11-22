@@ -62,8 +62,8 @@ namespace Considition2023_Cs.Genetics
                 bigMachines = rng.Next(3);
 
 
-                // in 33% of the cases, don't mix small and big machines
-                if (rng.Next(3) < 1)
+                // in 95% of the cases, don't mix small and big machines
+                if (rng.Next(20) > 0)
                 {
                     if (rng.Next(2) > 0)
                     {

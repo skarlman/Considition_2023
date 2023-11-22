@@ -154,16 +154,16 @@ Console.ReadLine();
 
 SubmitSolution RunNormalMapFitness(MapData mapData, GeneralData generalData)
 {
-    var populationMinSize = mapData.locations.Count();
-    var populationMaxSize = mapData.locations.Count() * 2;
+    var populationMinSize = 50; // mapData.locations.Count();
+    var populationMaxSize = 75; //= mapData.locations.Count() *2;
     var iterations = 1000000;
 
     return FitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations, submitSolutionApi, realApi);
 }
 SubmitSolution RunSandboxMapFitness(MapData mapData, GeneralData generalData)
 {
-    var populationMinSize = 100;
-    var populationMaxSize = 150;
+    var populationMinSize = 50;
+    var populationMaxSize = 75;
     var iterations = 1000000;
 
     return SandboxFitnessRunner.RunEvolution(mapData, generalData, populationMinSize, populationMaxSize, iterations,submitSolutionApi, realApi);
