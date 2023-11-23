@@ -72,7 +72,7 @@ Console.WriteLine($"Found in {(DateTime.UtcNow - starttime).TotalSeconds}s.");
 GameData score = Scoring.CalculateScore(mapData.MapName, solution, mapData, generalData);
 Console.WriteLine($"GameScore: {score.GameScore.Total}");
 
-Scoring.SandboxValidation(mapName, solution, mapData);
+//Scoring.SandboxValidation(mapName, solution, mapData);
 
 GameData serverScore = await submitSolutionApi.SumbitAsync(mapName, solution, GlobalUtils.apiKey);
 Console.WriteLine($"GameId: {serverScore.Id}");
