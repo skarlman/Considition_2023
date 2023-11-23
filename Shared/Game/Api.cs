@@ -134,7 +134,7 @@ public class Api
             await Console.Out.WriteLineAsync($" Score [{score.Value}] for solution on map [{mapName}]");
         }
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             try
             {
@@ -145,7 +145,7 @@ public class Api
             {
                 await Console.Out.WriteLineAsync($"SUBMIT EXCEPTION! {ex.Message}, retrying {i+1}...");
 
-                await Task.Delay(10);
+                await Task.Delay(50);
             }
         }
 
