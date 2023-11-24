@@ -1,5 +1,5 @@
 # Genetic algorithm for the Considition 2023 competition
-## Defending the "Best worst algorithm prize" from 2022
+## Defending the ["Best worst algorithm prize"](https://github.com/skarlman/Considition-2022-CSharp) from 2022
 
 ### Competition:
 [See competition here for rules](https://www.considition.com/)
@@ -9,8 +9,10 @@ The solution contains 3 projects.
 * Shared - Pocos and config
 * Solution submitter - Rest proxy to handle retries and allow fast submissions for the game regardless of the server (big part of the success for 2022)
 
+The whole "algorithm" is contained in the [Genetics folder](https://github.com/skarlman/Considition_2023/tree/master/Considition2023-Cs/Genetics) of the Considition2023-Cs project
+
 ## Algorithm
-There are two variations of the game - Normal maps and Sandbox maps
+There are two variations of the game - Normal maps and Sandbox maps. It is a genetic algorithm *(very AI, much wow!)* that evolves and finds the optimal solution on it's own.
 
 ### Normal maps
 A gene consists of two numbers, how many of each type of refill stations. It is initialized randomly between 0-2, and in 95% of the cases one is set to 0 to not mix stations (hypothesis, it will very rarely be optimal to mix)
